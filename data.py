@@ -3,9 +3,43 @@ from os import path as ps
 from os import listdir
 import numpy as np
 import scipy.io as sio
-train_path="./CK/CKTrain/"
-test_path="./CK/CKTest/"
-def getCKdata():
+from sklearn import preprocessing
+def normalizetion(x_train):
+	featureNum=x_train.shape[1]
+	fmax=np.zeros(shape=(featureNum,))
+	fmin=np.zeros(shape=(featureNum,))
+	for f in fmin:
+		f=float("inf")
+	for f in fmax:
+		f=float("-inf")
+	for x in x_train:
+		for i in range(featureNum):
+			if x[i]>fmax[i]:
+				fmax[i]=x[i]
+			if x[i]<fmin[i]:
+				fmin[i]=x[i]
+
+	for x in x_train:
+		for i in range(featureNum):
+			x[i]=(x[i]-fmin[i])/(fmax[i]-fmin[i])
+def NASAData():
+	train_path="./NASA/NASATrain/"
+	test_path="./NASA/NASATest/"
+	Trainlist=listdir(train_path)
+	Testlist=listdir(test_path)
+	data_train=np.zeros(shape=(0,40))
+	data_test=np.zeros(shape=(0,40))
+	for fpath in Trainlist:
+		file=sio.loadmat(ps.join(train_path,fpath))
+		for data in file[fpath.split('.')[0]][0]:
+		 	print(data.shape)
+	# for fpath in Testlist:
+	# 	file=sio.loadmat(ps.join(test_path,fpath))
+	# 	for data in file[fpath.split('.')[0]][0]:
+	# 	 	data_test=np.vstack((data_test,data))
+def CKData():
+	train_path="./CK/CKTrain/"
+	test_path="./CK/CKTest/"
 	Trainlist=listdir(train_path)
 	Testlist=listdir(test_path)
 	data_train=np.zeros(shape=(0,21))
@@ -18,7 +52,6 @@ def getCKdata():
 		file=sio.loadmat(ps.join(test_path,fpath))
 		for data in file[fpath.split('.')[0]][0]:
 		 	data_test=np.vstack((data_test,data))
-
 	x_train=np.zeros(shape=(data_train.__len__(),20))
 	y_train=np.zeros(shape=(data_train.__len__(),))
 	x_test=np.zeros(shape=(data_test.__len__(),20))
@@ -33,7 +66,6 @@ def getCKdata():
 		y_train[i]=1 if y_train[i]==1 else 0
 	for i in range(y_test.__len__()):
 		y_test[i]=1 if y_test[i]==1 else 0
-
 	x_test_Positive=np.zeros(shape=(20))
 	x_test_Negative=np.zeros(shape=(20))
 	y_test_Positive=np.zeros(shape=(1))
@@ -45,4 +77,7 @@ def getCKdata():
 		else:
 			x_test_Negative=np.vstack((x_test_Negative,x_test[i]))
 			y_test_Negative=np.vstack((y_test_Negative,y_test[i]))
+	normalizetion(x_train)
+	normalizetion(x_test_Positive)
+	normalizetion(x_test_Negative)
 	return x_train,y_train,x_test_Positive,y_test_Positive,x_test_Negative,y_test_Negative
