@@ -77,7 +77,7 @@ def CKData():
 		else:
 			x_test_Negative=np.vstack((x_test_Negative,x_test[i]))
 			y_test_Negative=np.vstack((y_test_Negative,y_test[i]))
-	normalizetion(x_train)
-	normalizetion(x_test_Positive)
-	normalizetion(x_test_Negative)
+	# normalizetion(x_train)
+	# normalizetion(x_test_Positive)
+	# normalizetion(x_test_Negative)
 	return x_train,y_train,x_test_Positive,y_test_Positive,x_test_Negative,y_test_Negative
