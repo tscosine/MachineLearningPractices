@@ -1,20 +1,19 @@
 from keras.layers import Input,Dense,Embedding,LSTM,Average
 from keras.models import Model
-from data import CKData
 from keras.utils import to_categorical
 from sklearn import metrics 
 from keras.callbacks import Callback
 import numpy as np
+import data
 batch=32
-x_train,y_train,xp,yp,xn,yn=CKData()
-x_train=x_train.reshape((-1,20,1))
-xp=xp.reshape((-1,20,1))
-xn=xn.reshape((-1,20,1))
-y_test=np.vstack((yp,yn))
-x_test=np.vstack((xp,xn))
+feature=37
+x_train,x_test,y_train,y_test,xp,xn,yp,yn=data.NASAData(4)
+x_train=x_train.reshape((-1,feature,1))
+xp=xp.reshape((-1,feature,1))
+xn=xn.reshape((-1,feature,1))
 P_num=xp.shape[0]
 N_num=xn.shape[0]
-inputs = Input(shape=(20,1))
+inputs = Input(shape=(feature,1))
 lstm_forward=LSTM(256)(inputs)
 lstm_back=LSTM(256,go_backwards=True)(inputs)
 merge=Average()([lstm_forward,lstm_back])

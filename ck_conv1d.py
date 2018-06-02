@@ -12,7 +12,7 @@ x_train,y_train,x_test_P,y_test_P,x_test_N,y_test_N=CKData()
 
 featureNum=20
 batch=128
-epochs=2000
+epochs=2048
 
 x_test=np.vstack((x_test_P,x_test_N))
 y_test=np.vstack((y_test_P,y_test_N))
@@ -24,13 +24,13 @@ P_num=x_test_P.shape[0]
 N_num=x_test_N.shape[0]
 
 model = Sequential()
-model.add(Conv1D(256, 3, 
+model.add(Conv1D(64, 5, 
 	activation='relu',
 	padding='same',
 	input_shape=(featureNum,1)))
-model.add(Conv1D(256, 3, activation='relu',padding='same'))
+model.add(Conv1D(128, 5, activation='relu',padding='same'))
 model.add(MaxPooling1D(2))
-model.add(Conv1D(256, 3, activation='relu',padding='same'))
+model.add(Conv1D(256, 5, activation='relu',padding='same'))
 model.add(MaxPooling1D(2))
 model.add(Conv1D(256, 3, activation='relu',padding='same'))
 model.add(GlobalAveragePooling1D())
@@ -42,7 +42,6 @@ model.summary()
 opt=Adam(lr=0.001)
 model.compile(
 	loss='binary_crossentropy',
-	#loss='mean_squared_error',
 	optimizer=opt,
 	metrics=['accuracy'])
 model.fit(x_train,y_train,batch_size=batch,epochs=epochs)
