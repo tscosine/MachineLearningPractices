@@ -5,7 +5,10 @@ from keras.utils import to_categorical
 from sklearn import metrics 
 from keras.callbacks import Callback
 import numpy as np
+#parameter
 batch=32
+epochs=1024
+#data set 
 x_train,y_train,xp,yp,xn,yn=CKData()
 x_train=x_train.reshape((-1,20,1))
 xp=xp.reshape((-1,20,1))
@@ -14,6 +17,8 @@ y_test=np.vstack((yp,yn))
 x_test=np.vstack((xp,xn))
 P_num=xp.shape[0]
 N_num=xn.shape[0]
+
+#BLSTM model
 inputs = Input(shape=(20,1))
 lstm_forward=LSTM(256)(inputs)
 lstm_back=LSTM(256,go_backwards=True)(inputs)
@@ -22,6 +27,8 @@ dense=Dense(128,activation='relu')(merge)
 outputs=Dense(1,activation='sigmoid')(dense)
 model = Model(inputs=inputs, outputs=outputs)
 model.summary()
+
+#Train
 model.compile(
 	loss='binary_crossentropy',
 	optimizer='adam',
@@ -29,8 +36,10 @@ model.compile(
 model.fit(
 	x_train,
 	y_train,
-	epochs=1024,
+	epochs=epochs,
 	batch_size=batch)
+
+#Evaluate
 P_score = model.evaluate(
 	xp,yp,verbose=1)
 N_score = model.evaluate(
