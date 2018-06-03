@@ -5,12 +5,13 @@ from sklearn import metrics
 from keras.callbacks import Callback
 import numpy as np
 import data
+import matplotlib.pyplot as plt
 #parameter
-SetNum=1
+SetNum=6
 batch=32
 feature=[37,39,39,37,37,37,37,37][SetNum]
-epochs=128
-
+epochs=256
+hidden_units=64
 #get data set 
 x_train,x_test,y_train,y_test,xp,xn,yp,yn=data.NASAData(SetNum)
 x_train=x_train.reshape((-1,feature,1))
@@ -22,10 +23,10 @@ N_num=xn.shape[0]
 
 #Functional model BLSTM
 inputs = Input(shape=(feature,1))
-lstm_forward=LSTM(256)(inputs)
-lstm_back=LSTM(256,go_backwards=True)(inputs)
+lstm_forward=LSTM(hidden_units)(inputs)
+lstm_back=LSTM(hidden_units,go_backwards=True)(inputs)
 merge=Average()([lstm_forward,lstm_back])
-dense=Dense(128,activation='relu')(merge)
+dense=Dense(hidden_units,activation='relu')(merge)
 outputs=Dense(1,activation='sigmoid')(dense)
 model = Model(inputs=inputs, outputs=outputs)
 model.summary()
@@ -46,7 +47,9 @@ P_score = model.evaluate(
 	xp,yp,verbose=1)
 N_score = model.evaluate(
 	xn,yn,verbose=1)
+
 y_pred=model.predict(x_test,verbose=1)
+fpr,tpr,threshold=metrics.roc_curve(y_test,y_pred) ###计算真正率和假正率  
 auc=metrics.roc_auc_score(y_test,y_pred)
 TP=P_num*P_score[1]
 TN=N_num*N_score[1]
@@ -65,3 +68,19 @@ print('Precision=',Precision)
 print('Recall=',Recall)
 print('F-measure=',F_measure)
 print('pf=',pf)
+
+lw=2
+plt.figure(figsize=(10,10))  
+plt.plot(
+	fpr, tpr,
+	color='darkorange',  
+	lw=lw, 
+	label='ROC curve (area = %0.2f)' % auc) 
+plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')  
+plt.xlim([0.0, 1.0])  
+plt.ylim([0.0, 1.05])  
+plt.xlabel('False Positive Rate')  
+plt.ylabel('True Positive Rate')  
+plt.title('Receiver operating characteristic example')  
+plt.legend(loc="lower right")  
+plt.show()  
