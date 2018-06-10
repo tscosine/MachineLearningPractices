@@ -25,7 +25,7 @@ def NASAData(index):
 	assert(index<=7)
 	train_path="./NASA/NASATrain/"
 	test_path="./NASA/NASATest/"
-	datalen=[38,40,40,38,38,38,38,38]
+	datalen=[38,40,40,38,38,38,38,39]
 	dataname=['cm1','kc3','mc2','mw1','pc1','pc3','pc4','pc5']
 	data_train=np.zeros(shape=(0,datalen[index]))
 	data_test=np.zeros(shape=(0,datalen[index]))
@@ -106,7 +106,11 @@ def CKData():
 	# normalizetion(x_train)
 	# normalizetion(xp)
 	# normalizetion(xn)
-	return x_train,y_train,xp,yp,xn,yn
+	x_test=np.vstack((xp,xn))
+	y_test=np.vstack((yp,yn))
+	print(x_test.shape)
+	print(y_test.shape)
+	return x_train,y_train,x_test,y_test,xp,yp,xn,yn
 if __name__== '__main__':
 	for i in range(7):
 		x_train,x_test,y_train,y_test,xp,xn,yp,yn=NASAData(i)
